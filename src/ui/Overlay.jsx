@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { PRESETS, PRESET_ORDER } from '../weather/presets.js'
+import { FloorPlan } from './FloorPlan.jsx'
 
 const ICONS = {
   sunny: (
@@ -86,6 +87,20 @@ export function Overlay({ preset, setPreset, ready, progress = 0, onReset, inter
     }
   }, [])
 
+  // H hides / shows all controls, P opens the floor plans
+  const [uiHidden, setUiHidden] = useState(false)
+  const [planOpen, setPlanOpen] = useState(false)
+  const closePlan = useCallback(() => setPlanOpen(false), [])
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.target.closest?.('input, textarea') || e.metaKey || e.ctrlKey || e.altKey) return
+      if (e.key === 'h' || e.key === 'H') setUiHidden((v) => !v)
+      if (e.key === 'p' || e.key === 'P') setPlanOpen((v) => !v)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
   const toggleFs = () => {
     const el = document.documentElement
     if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document)
@@ -107,6 +122,7 @@ export function Overlay({ preset, setPreset, ready, progress = 0, onReset, inter
         </div>
       </div>
 
+      <div className={`chrome ${uiHidden ? 'chrome-hidden' : ''}`} aria-hidden={uiHidden}>
       <header className="brand">
         <div className="brand-kicker">Pagsanjan · Laguna</div>
         <h1 className="brand-title">
@@ -116,6 +132,19 @@ export function Overlay({ preset, setPreset, ready, progress = 0, onReset, inter
       </header>
 
       <div className="tools">
+        <button className="tool" onClick={() => setPlanOpen(true)} aria-label="Show floor plans" title="Floor plans (P)">
+          <Icon size={18}>
+            <rect x="3.5" y="3.5" width="17" height="17" />
+            <path d="M3.5 11h7V3.5M10.5 15v5.5M14 11h6.5M14 11v4" />
+          </Icon>
+        </button>
+        <button className="tool" onClick={() => setUiHidden(true)} aria-label="Hide controls" title="Hide controls (H)">
+          <Icon size={18}>
+            <path d="M3 12s3.3-6 9-6 9 6 9 6-3.3 6-9 6-9-6-9-6z" />
+            <circle cx="12" cy="12" r="2.6" />
+            <path d="M4 20L20 4" />
+          </Icon>
+        </button>
         {preset === 'rainy' && (
           <button className={`tool ${sound ? 'on' : ''}`} onClick={() => setSound(!sound)} aria-label={sound ? 'Mute rain sound' : 'Play rain sound'} title={sound ? 'Mute rain' : 'Rain sound'}>
             <Icon size={18}>
@@ -177,6 +206,18 @@ export function Overlay({ preset, setPreset, ready, progress = 0, onReset, inter
           ))}
         </div>
       </nav>
+      </div>
+
+      {uiHidden && (
+        <button className="show-ui" onClick={() => setUiHidden(false)} aria-label="Show controls" title="Show controls (H)">
+          <Icon size={18}>
+            <path d="M3 12s3.3-6 9-6 9 6 9 6-3.3 6-9 6-9-6-9-6z" />
+            <circle cx="12" cy="12" r="2.6" />
+          </Icon>
+        </button>
+      )}
+
+      <FloorPlan open={planOpen} onClose={closePlan} />
     </>
   )
 }

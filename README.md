@@ -19,6 +19,8 @@ npm run preview   # serve the production build
 - **Zoom:** scroll wheel or pinch. Zoom heads toward whatever you point at; keep zooming at the door or a window to step inside the café (ground or second floor). Inside, scroll or pinch to walk and drag to look around. Scroll back, or press **Step outside**, to leave.
 - **Pan:** right-drag (two fingers on touch screens)
 - **Reset view / Fullscreen:** buttons at the top right
+- **Floor plans (P):** opens dimensioned ground- and second-floor plans of the café, with a numbered fixture legend
+- **Hide controls (H):** hides every panel for a clean view; the small eye button (or H) brings them back
 - **Weather & light:** Sunny, Cloudy, Overcast, Rainy, Golden Hour, Sunset, Night. Rainy also shows an optional rain-sound toggle, which is off by default.
 
 ## How it is built
